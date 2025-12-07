@@ -44,8 +44,10 @@ ai-os/                       # AI Project OS (generated)
   ai-context.md
   ai-workflows.md
   ai-roadmap.md
-  OS_SUMMARY.md
-  PROJECT_SUMMARY.md
+  OS_SUMMARY.md              # fast OS overview (derived)
+  PROJECT_SUMMARY.md         # fast project overview (derived)
+  ai-os-schema.md            # OS file structure/schema
+  ai-os-changelog.md         # short OS change history
 ```
 
 ---
