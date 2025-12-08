@@ -1,8 +1,5 @@
 #!/usr/bin/env bash
 
-# Genesis setup script (Unix/macOS)
-# Creates a new project folder and copies the chosen Genesis profile into it.
-
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -58,25 +55,31 @@ echo "This only changes how the AI Project OS is organised."
 echo "In both cases, Genesis will ask detailed questions about your project"
 echo "and tailor the OS to your answers before creating any files."
 
-PROFILE_DIR=""
 PROFILE_NAME=""
+PROFILE=""
 while true; do
   read -r -p "Enter 1 or 2: " PROFILE
   case "$PROFILE" in
     1)
       PROFILE_NAME="Light"
-      PROFILE_NAME="Light"
       break
       ;;
+    2)
       PROFILE_NAME="Heavy"
       break
       ;;
+    *)
+      echo "Please enter 1 for Light or 2 for Heavy."
+      ;;
+  esac
+done
 
 echo
 echo "Creating project \"$PROJECT_NAME\" with $PROFILE_NAME profile..."
+echo
 
 if [ "$PROFILE" = "1" ]; then
-  cat <<EOF >"$TARGET_DIR/GENESIS.md"
+  cat <<'EOF_GENESIS_LIGHT' >"$TARGET_DIR/GENESIS.md"
 # GENESIS.md - Project OS Bootstrapper (Light Profile, Canonical)
 > Genesis Profile: light v1
 
@@ -413,8 +416,9 @@ From this point on:
 Begin **PHASE 1 - DISCOVERY**.
 
 Ask your first batch of at most three theme-aligned questions about the project.
-EOF
-  cat <<EOF >"$TARGET_DIR/DEV_GUIDE.md"
+EOF_GENESIS_LIGHT
+
+  cat <<'EOF_DEV_LIGHT' >"$TARGET_DIR/DEV_GUIDE.md"
 # DEV_GUIDE.md - How to work in this repository (Light Profile)
 
 This repository uses the **Project Generation System - Genesis (light)**.
@@ -712,8 +716,9 @@ You do **not** need Genesis for day-to-day work.
 - `update summaries` → "refresh the human summary from the guide"  
 
 If you follow this, you won't get lost.
-EOF
-  cat <<EOF >"$TARGET_DIR/CHAT_INIT.md"
+EOF_DEV_LIGHT
+
+  cat <<'EOF_CHAT_LIGHT' >"$TARGET_DIR/CHAT_INIT.md"
 # CHAT_INIT.md - AI Bootloader for This Project (Light Profile)
 
 You are an AI assisting in this repository.
@@ -830,9 +835,10 @@ Follow the detailed safety rules encoded in `ai-project-guide.md`.
 ---
 
 From this point onwards in a chat, you are fully initialized in light mode and must act according to the Project OS.***
-EOF
+EOF_CHAT_LIGHT
+
 else
-  cat <<EOF >"$TARGET_DIR/GENESIS.md"
+  cat <<'EOF_GENESIS_HEAVY' >"$TARGET_DIR/GENESIS.md"
 # 🧬 GENESIS.md — Project OS Bootstrapper (Canonical)
 
 > Genesis Profile: heavy v1
@@ -1267,8 +1273,9 @@ From this point on:
 Begin **PHASE 1 — DISCOVERY**.
 
 Ask your first set of questions about the project.
-EOF
-  cat <<EOF >"$TARGET_DIR/DEV_GUIDE.md"
+EOF_GENESIS_HEAVY
+
+  cat <<'EOF_DEV_HEAVY' >"$TARGET_DIR/DEV_GUIDE.md"
 # DEV_GUIDE.md — How to work in this repository (Humans + AI)
 
 This repository uses the **Project Generation System – Genesis**.
@@ -1578,8 +1585,9 @@ You do **not** need Genesis for day‑to‑day work.
 - `chat resync` → “reload the OS, keep the task”  
 
 If you follow this, you won’t get lost.
-EOF
-  cat <<EOF >"$TARGET_DIR/CHAT_INIT.md"
+EOF_DEV_HEAVY
+
+  cat <<'EOF_CHAT_HEAVY' >"$TARGET_DIR/CHAT_INIT.md"
 # CHAT_INIT.md — AI Bootloader for This Project
 
 You are an AI assisting in this repository.
@@ -1704,7 +1712,23 @@ Follow the detailed safety rules defined in `ai-rules.md`.
 ---
 
 From this point onwards in a chat, you are fully initialized and must act according to the Project OS.
-EOF
+EOF_CHAT_HEAVY
 fi
 
-printf "Read project-system/CHAT_INIT.md and follow it.\n" >"\$TARGET_DIR/chat.md"
+printf 'Read project-system/CHAT_INIT.md and follow it.\n' >"$TARGET_DIR/chat.md"
+
+echo
+echo "Done."
+echo "Project folder: \"$PROJECT_NAME\""
+echo "Profile: $PROFILE_NAME"
+echo
+echo "Next steps:"
+echo "  1) Open the \"$PROJECT_NAME\" folder in your AI tool."
+echo "  2) Start a new chat in that folder."
+echo "  3) Run:  read GENESIS.md"
+echo "  4) Answer the questions. When Genesis finishes, it will create /ai-os/,"
+echo "     move DEV_GUIDE.md and CHAT_INIT.md into project-system/, and you can"
+echo "     then delete GENESIS.md."
+echo
+
+exit 0

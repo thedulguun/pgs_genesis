@@ -1,11 +1,6 @@
 @echo off
 setlocal ENABLEDELAYEDEXPANSION
 
-rem Genesis setup script (Windows)
-rem Creates a new project folder and copies the chosen Genesis profile into it.
-
-set "SCRIPT_DIR=%~dp0"
-
 echo.
 echo Project Generation System - Genesis Setup
 echo ========================================
@@ -13,7 +8,7 @@ echo This will create or prepare a project folder and place
 echo the Genesis files inside it.
 echo From there, you'll open that folder in your AI tool and run
 echo "read GENESIS.md" once to create the Project OS.
-echo
+echo.
 echo You can enter a NEW folder name (it will be created),
 echo or point to an EXISTING folder (and we will add Genesis files there).
 echo.
@@ -53,62 +48,19 @@ set "PROFILE="
 set /p PROFILE=Enter 1 or 2: 
 if "%PROFILE%"=="1" (
     set "PROFILE_NAME=Light"
-    set "PROFILE_DIR=%SCRIPT_DIR%genesis-light-v1"
 ) else if "%PROFILE%"=="2" (
     set "PROFILE_NAME=Heavy"
-    set "PROFILE_DIR=%SCRIPT_DIR%genesis-heavy-v1"
 ) else (
     echo Please enter 1 for Light or 2 for Heavy.
     goto ask_profile
 )
 
-if not exist "%PROFILE_DIR%\GENESIS.md" (
-    echo.
-    echo ERROR: Could not find GENESIS.md in "%PROFILE_DIR%".
-    echo Make sure the genesis-light-v1 and genesis-heavy-v1 folders
-    echo are located next to this script.
-    goto :eof
-)
-
 echo.
 echo Creating project "%PROJECT_NAME%" with %PROFILE_NAME% profile...
-
-copy /Y "%PROFILE_DIR%\GENESIS.md" "%TARGET_DIR%\GENESIS.md" >nul
-copy /Y "%PROFILE_DIR%\DEV_GUIDE.md" "%TARGET_DIR%\DEV_GUIDE.md" >nul
-copy /Y "%PROFILE_DIR%\CHAT_INIT.md" "%TARGET_DIR%\CHAT_INIT.md" >nul
-
-echo Read project-system/CHAT_INIT.md and follow it.>"%TARGET_DIR%\chat.md"
-
 echo.
-echo Done.
-echo Project folder: "%PROJECT_NAME%"
-echo Profile: %PROFILE_NAME%
-echo.
-echo Next steps:
-echo   1^> Open the "%PROJECT_NAME%" folder in your AI tool.
-echo   2^> Start a new chat in that folder.
-echo   3^> Run:  read GENESIS.md
-echo   4^> Answer the questions. When Genesis finishes, it will create /ai-os/
-echo      and project-system/, move DEV_GUIDE.md and CHAT_INIT.md, and you can
-echo      then delete GENESIS.md.
-echo.
-
-endlocal
-exit /b 0
 
 if "%PROFILE%"=="1" (
-    set "PROFILE_NAME=Light"
-) else if "%PROFILE%"=="2" (
-    set "PROFILE_NAME=Heavy"
-) else (
-    echo Please enter 1 for Light or 2 for Heavy.
-    goto ask_profile
-)
-
-echo.
-echo Creating project "%PROJECT_NAME%" with %PROFILE_NAME% profile...
-
-powershell -NoProfile -Command "@'
+    powershell -NoProfile -Command "@'
 # GENESIS.md - Project OS Bootstrapper (Light Profile, Canonical)
 > Genesis Profile: light v1
 
@@ -445,8 +397,9 @@ From this point on:
 Begin **PHASE 1 - DISCOVERY**.
 
 Ask your first batch of at most three theme-aligned questions about the project.
-'@ | Set-Content -Encoding UTF8 \"%TARGET_DIR%\GENESIS_light.md\"" >nul
-powershell -NoProfile -Command "@'
+'@ | Set-Content -Encoding UTF8 "%TARGET_DIR%\GENESIS.md""
+
+    powershell -NoProfile -Command "@'
 # DEV_GUIDE.md - How to work in this repository (Light Profile)
 
 This repository uses the **Project Generation System - Genesis (light)**.
@@ -744,8 +697,9 @@ You do **not** need Genesis for day-to-day work.
 - `update summaries` → "refresh the human summary from the guide"  
 
 If you follow this, you won't get lost.
-'@ | Set-Content -Encoding UTF8 \"%TARGET_DIR%\DEV_GUIDE_light.md\"" >nul
-powershell -NoProfile -Command "@'
+'@ | Set-Content -Encoding UTF8 "%TARGET_DIR%\DEV_GUIDE.md""
+
+    powershell -NoProfile -Command "@'
 # CHAT_INIT.md - AI Bootloader for This Project (Light Profile)
 
 You are an AI assisting in this repository.
@@ -862,9 +816,9 @@ Follow the detailed safety rules encoded in `ai-project-guide.md`.
 ---
 
 From this point onwards in a chat, you are fully initialized in light mode and must act according to the Project OS.***
-'@ | Set-Content -Encoding UTF8 \"%TARGET_DIR%\CHAT_INIT_light.md\"" >nul
-
-powershell -NoProfile -Command "@'
+'@ | Set-Content -Encoding UTF8 "%TARGET_DIR%\CHAT_INIT.md""
+) else (
+    powershell -NoProfile -Command "@'
 # 🧬 GENESIS.md — Project OS Bootstrapper (Canonical)
 
 > Genesis Profile: heavy v1
@@ -1299,8 +1253,9 @@ From this point on:
 Begin **PHASE 1 — DISCOVERY**.
 
 Ask your first set of questions about the project.
-'@ | Set-Content -Encoding UTF8 \"%TARGET_DIR%\GENESIS_heavy.md\"" >nul
-powershell -NoProfile -Command "@'
+'@ | Set-Content -Encoding UTF8 "%TARGET_DIR%\GENESIS.md""
+
+    powershell -NoProfile -Command "@'
 # DEV_GUIDE.md — How to work in this repository (Humans + AI)
 
 This repository uses the **Project Generation System – Genesis**.
@@ -1610,8 +1565,9 @@ You do **not** need Genesis for day‑to‑day work.
 - `chat resync` → “reload the OS, keep the task”  
 
 If you follow this, you won’t get lost.
-'@ | Set-Content -Encoding UTF8 \"%TARGET_DIR%\DEV_GUIDE_heavy.md\"" >nul
-powershell -NoProfile -Command "@'
+'@ | Set-Content -Encoding UTF8 "%TARGET_DIR%\DEV_GUIDE.md""
+
+    powershell -NoProfile -Command "@'
 # CHAT_INIT.md — AI Bootloader for This Project
 
 You are an AI assisting in this repository.
@@ -1736,16 +1692,24 @@ Follow the detailed safety rules defined in `ai-rules.md`.
 ---
 
 From this point onwards in a chat, you are fully initialized and must act according to the Project OS.
-'@ | Set-Content -Encoding UTF8 \"%TARGET_DIR%\CHAT_INIT_heavy.md\"" >nul
-
-if "%PROFILE%"=="1" (
-    move /Y "%TARGET_DIR%\GENESIS_light.md" "%TARGET_DIR%\GENESIS.md" >nul
-    move /Y "%TARGET_DIR%\DEV_GUIDE_light.md" "%TARGET_DIR%\DEV_GUIDE.md" >nul
-    move /Y "%TARGET_DIR%\CHAT_INIT_light.md" "%TARGET_DIR%\CHAT_INIT.md" >nul
-) else (
-    move /Y "%TARGET_DIR%\GENESIS_heavy.md" "%TARGET_DIR%\GENESIS.md" >nul
-    move /Y "%TARGET_DIR%\DEV_GUIDE_heavy.md" "%TARGET_DIR%\DEV_GUIDE.md" >nul
-    move /Y "%TARGET_DIR%\CHAT_INIT_heavy.md" "%TARGET_DIR%\CHAT_INIT.md" >nul
+'@ | Set-Content -Encoding UTF8 "%TARGET_DIR%\CHAT_INIT.md""
 )
 
 echo Read project-system/CHAT_INIT.md and follow it.>"%TARGET_DIR%\chat.md"
+
+echo.
+echo Done.
+echo Project folder: "%PROJECT_NAME%"
+echo Profile: %PROFILE_NAME%
+echo.
+echo Next steps:
+echo   1^> Open the "%PROJECT_NAME%" folder in your AI tool.
+echo   2^> Start a new chat in that folder.
+echo   3^> Run:  read GENESIS.md
+echo   4^> Answer the questions. When Genesis finishes, it will create /ai-os/
+echo      and project-system/, move DEV_GUIDE.md and CHAT_INIT.md, and you can
+echo      then delete GENESIS.md.
+echo.
+
+endlocal
+exit /b 0
